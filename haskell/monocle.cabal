@@ -1,0 +1,268 @@
+cabal-version:       3.0
+name:                monocle
+version:             0.1.2.1
+homepage:            https://github.com/change-metrics/monocle#readme
+bug-reports:         https://github.com/change-metrics/monocle/issues
+license:             AGPL-3.0-only
+license-file:        LICENSE
+author:              Monocle authors
+maintainer:          Monocle authors <fboucher@redhat.com>
+copyright:           2021 Monocle authors
+category:            Development
+build-type:          Simple
+extra-doc-files:     README.md
+tested-with:         GHC == 8.10.4
+extra-source-files:  dhall-monocle/Monocle/**/*.dhall,
+                     github-schema/schema.docs.graphql,
+                     gitlab-schema/schema.graphql,
+                     test/data/*.yaml,
+                     test/data/*.json
+
+source-repository head
+  type:                git
+  location:            https://github.com/change-metrics/monocle.git
+
+flag ci
+  description: Make warnings error
+  default:     False
+  manual:      True
+
+common common-options
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-uni-patterns
+                       -Wincomplete-record-updates
+                       -Wno-missing-pattern-synonym-signatures
+                       --write-ghc-environment-files=always
+                       -- Enable stan integration
+                       -fwrite-ide-info
+                       -hiedir=.hie
+  if impl(ghc >= 8.0)
+    ghc-options:       -Wredundant-constraints
+  if impl(ghc >= 8.2)
+    ghc-options:       -fhide-source-paths
+  if impl(ghc >= 8.4)
+    ghc-options:       -Wpartial-fields
+  if impl(ghc >= 8.10)
+    ghc-options:       -Wunused-packages
+  if flag(ci)
+    ghc-options:       -Werror
+
+  default-language:    Haskell2010
+  default-extensions:  BangPatterns,
+                       ConstraintKinds,
+                       DeriveGeneric,
+                       DerivingStrategies,
+                       FlexibleInstances,
+                       FlexibleContexts,
+                       GeneralizedNewtypeDeriving,
+                       LambdaCase,
+                       MultiWayIf,
+                       NamedFieldPuns,
+                       NamedWildCards,
+                       NoImplicitPrelude,
+                       NumDecimals,
+                       NumericUnderscores,
+                       MultiParamTypeClasses,
+                       OverloadedStrings,
+                       QuasiQuotes,
+                       PatternSynonyms,
+                       RecordWildCards,
+                       ScopedTypeVariables,
+                       StrictData,
+                       TypeApplications,
+                       TypeOperators
+
+common codegen
+  default-language:    Haskell2010
+  hs-source-dirs:      codegen
+  build-depends:       base                       < 5
+                     , aeson                      >= 2.0.2.0
+                     , bytestring
+                     , containers                 < 0.7
+                     , deepseq                    < 1.5
+                     , proto3-suite               >= 0.4.2
+                     , proto3-wire                >= 1.2.0
+                     , text
+                     , vector                     < 0.13
+
+common cli-options
+  hs-source-dirs:      app
+  build-depends:       base, monocle
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -with-rtsopts=-T
+
+library
+  import:              common-options, codegen
+  build-depends:       base                       < 5
+                     , MonadRandom
+                     , aeson                      >= 2.0.2.0
+                     , aeson-casing
+                     , aeson-pretty
+                     , attoparsec                 < 0.15
+                     , base64-bytestring          < 1.2.1.1
+                     , binary                     ^>= 0.8
+                     , bloodhound                 >= 0.18.0.0
+                     , bugzilla-redhat            >= 0.3.2
+                     , byteslice                  ^>= 0.2
+                     , bytestring                 >= 0.10
+                     , connection
+                     , containers                 ^>= 0.6
+                     , dhall                      ^>= 1.39
+                     , dhall-yaml                 ^>= 1.2
+                     , directory
+                     , either                     ^>= 5
+                     , envparse                   < 0.4.2
+                     , exceptions                 < 0.11
+                     , fakedata                   >= 1.0
+                     , fast-logger
+                     , foldl
+                     , gerrit                     >= 0.1.4
+                     , hashtables                 < 1.2.4.2
+                     , http-client                < 0.8
+                     , http-client-tls            < 0.4
+                     , http-mock                  < 0.2
+                     , http-types                 ^>=0.12
+                     , json-syntax                ^>= 0.2
+                     , lens
+                     , megaparsec                 < 10
+                     , morpheus-graphql-client    ^>= 0.17
+                     , mmorph
+                     , mtl
+                     , network                    < 4
+                     , network-uri                < 2.6.5
+                     , optparse-generic           < 1.5
+                     , parser-combinators         < 1.3
+                     , prometheus-client          ^>= 1.0
+                     , prometheus-metrics-ghc     ^>= 1.0
+                     , proto3-suite               >= 0.4.2
+                     , qq-literals
+                     , relude                     > 1.0 && < 1.1
+                     , retry                      < 0.9
+                     , safe-exceptions            < 0.1.7.3
+                     , say                        ^>= 0.1
+                     , servant                    >= 0.18.3 && < 0.20
+                     , servant-options            ^>= 0.1
+                     , servant-server             >= 0.18.3 && < 0.20
+                     , streaming                  < 0.3
+                     , tasty                      < 1.5
+                     , tasty-hunit                < 0.11
+                     , template-haskell
+                     , text-short                 ^>= 0.1
+                     , text-time                  ^>= 0.3
+                     , time
+                     , transformers
+                     , unliftio-core
+                     , unliftio
+                     , vector                     < 0.13
+                     , wai                        ^>= 3.2.3
+                     , wai-cors                   ^>= 0.2
+                     , wai-logger                 ^>= 2.3
+                     , wai-middleware-prometheus  ^>= 1.0
+                     , warp                       ^>= 3.3.15
+                     , witch                      ^>= 0.3
+  hs-source-dirs:      src
+  exposed-modules:     Monocle.Prelude
+                     , Monocle.Env
+                     , Monocle.Class
+                     , CLI
+
+                     -- monocle api
+                     , Monocle.Api
+                     , Monocle.Api.Config
+                     , Monocle.Api.Server
+
+                     -- api client for lentille
+                     , Monocle.Client
+                     , Monocle.Client.Api
+
+                     -- servant
+                     , Monocle.Servant.HTTP
+                     , Monocle.Servant.PBJSON
+
+                     -- bloodhound
+                     , Monocle.Backend.Documents
+                     , Monocle.Backend.Index
+                     , Monocle.Backend.Queries
+                     , Monocle.Backend.Test
+                     , Monocle.Backend.Provisioner
+                     , Monocle.Backend.Janitor
+                     , Monocle.Test.Spec
+
+                     -- megaparsec search language
+                     , Monocle.Search.Lexer
+                     , Monocle.Search.Parser
+                     , Monocle.Search.Query
+                     , Monocle.Search.Syntax
+
+                     -- Lentille
+                     , Lentille
+                     , Lentille.GraphQL
+                     , Lentille.Bugzilla
+
+                     , Lentille.GitHub.Favorites
+                     , Lentille.GitHub.Issues
+
+                     , Lentille.GitLab.MergeRequests
+                     , Lentille.GitLab.Group
+                     , Lentille.GitLab.Adapter
+
+                     , Lentille.Gerrit
+
+                     , Macroscope.Main
+                     , Macroscope.Worker
+                     , Macroscope.Test
+
+                     -- Fast json helpers
+                     , Json.Extras
+
+                     -- Codegen
+                     , Monocle.Change
+                     , Monocle.Config
+                     , Monocle.Search
+                     , Monocle.Crawler
+                     , Monocle.UserGroup
+                     , Monocle.Project
+
+
+  other-modules:       Database.Bloodhound.Raw
+                     , Lentille.BugzillaMock
+                     , Lentille.Bugzilla.Spec
+
+executable monocle-api
+  import:              common-options, cli-options
+  main-is:             Api.hs
+
+executable macroscope
+  import:              common-options, cli-options
+  main-is:             Macroscope.hs
+
+executable lentille
+  import:              common-options, cli-options
+  main-is:             LentilleStandalone.hs
+
+benchmark json-decode
+  import:              common-options
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  build-depends:       base, aeson, bloodhound, byteslice, bytestring, criterion, json-syntax, monocle, text-short, text-time, fakedata, random
+  main-is:             JsonDecode.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+
+test-suite monocle-test
+  import:              common-options
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base, monocle
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+
+test-suite monocle-doctest
+  type:               exitcode-stdio-1.0
+  default-language:   Haskell2010
+  hs-source-dirs:     test
+  ghc-options:        -threaded -Wall
+  main-is:            Doctest.hs
+  build-depends:      base
+                    , aeson-pretty < 0.8.9
+                    , doctest >= 0.9.3

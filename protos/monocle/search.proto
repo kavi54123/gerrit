@@ -1,0 +1,307 @@
+// Copyright: (c) 2021 Monocle authors
+// SPDX-License-Identifier: AGPL-3.0-only
+
+syntax = "proto3";
+package monocle_search;
+option go_package = "monocle/search";
+
+import "google/protobuf/timestamp.proto";
+
+message TaskData {
+  google.protobuf.Timestamp updated_at = 1;
+  string change_url = 2;
+  repeated string ttype = 3;
+  string tid = 4;
+  string url = 5;
+  string title = 6;
+  string severity = 7;
+  string priority = 8;
+  int32 score = 9;
+  string prefix = 10;
+}
+
+message SuggestionsRequest {
+  string index = 1;
+}
+
+message SuggestionsResponse {
+  repeated string task_types = 1;
+  repeated string authors = 2;
+  repeated string approvals = 3;
+  repeated string priorities = 4;
+  repeated string severities = 5;
+  repeated string projects = 6;
+  repeated string groups = 7;
+  repeated string labels = 8;
+}
+
+message FieldsRequest {
+  string version = 1;
+}
+
+message Field {
+  string name = 1;
+  string description = 2;
+  enum Type {
+    FIELD_DATE = 0;
+    FIELD_NUMBER = 1;
+    FIELD_TEXT = 2;
+    FIELD_BOOL = 3;
+    FIELD_REGEX = 4;
+  }
+  Type type = 3;
+}
+
+message FieldsResponse {
+  repeated Field fields = 1;
+}
+
+message QueryError {
+  string message = 1;
+  uint32 position = 2;
+}
+
+message CheckRequest {
+  string index = 1;
+  string username = 2;
+  string query = 3;
+}
+
+message CheckResponse {
+  oneof result {
+    string success = 1;
+    QueryError error = 2;
+  }
+}
+
+message Order {
+  string field = 1;
+  enum Direction {
+    ASC = 0;
+    DESC = 1;
+  }
+  Direction direction = 2;
+}
+
+message QueryRequest {
+  string index = 1;
+  string username = 2;
+  string query = 3;
+  enum QueryType {
+    QUERY_CHANGE = 0;
+    QUERY_REPOS_SUMMARY = 2;
+    QUERY_TOP_AUTHORS_CHANGES_CREATED = 3;
+    QUERY_TOP_AUTHORS_CHANGES_MERGED = 4;
+    QUERY_TOP_AUTHORS_CHANGES_REVIEWED = 5;
+    QUERY_TOP_AUTHORS_CHANGES_COMMENTED = 6;
+    QUERY_TOP_REVIEWED_AUTHORS = 7;
+    QUERY_TOP_COMMENTED_AUTHORS = 8;
+    QUERY_TOP_AUTHORS_PEERS = 9;
+    QUERY_NEW_CHANGES_AUTHORS = 10;
+
+    // Activity page
+    QUERY_CHANGES_REVIEW_STATS = 20;
+    QUERY_CHANGES_LIFECYCLE_STATS = 21;
+    QUERY_ACTIVE_AUTHORS_STATS = 22;
+
+    // Change page
+    QUERY_CHANGE_AND_EVENTS = 30;
+    QUERY_CHANGES_TOPS = 31;
+  }
+  QueryType query_type = 4;
+
+  // Only used for certain queries
+  Order order = 5;
+  uint32 limit = 6;
+  string change_id = 7;
+}
+
+message File {
+  uint32 additions = 1;
+  uint32 deletions = 2;
+  string path = 3;
+}
+
+message Commit {
+  string sha = 1;
+  string title = 2;
+  string author = 3;
+  google.protobuf.Timestamp authored_at = 4;
+  string committer = 5;
+  google.protobuf.Timestamp committed_at = 6;
+  uint32 additions = 10;
+  uint32 deletions = 11;
+}
+
+message Change {
+  string change_id = 1;
+  string author = 2;
+  string title = 3;
+  string url = 4;
+  string repository_fullname = 5;
+  string state = 6;
+  string branch = 7;
+  string target_branch = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  google.protobuf.Timestamp merged_at = 11;
+
+  oneof merged_byM {
+    string merged_by = 12;
+  }
+
+  string text = 15;
+
+  uint32 additions = 20;
+  uint32 deletions = 21;
+  repeated string approval = 25;
+  repeated string assignees = 26;
+  repeated string labels = 27;
+
+  bool draft = 30;
+//  bool has_issue_tracker_links = 31;
+  bool mergeable = 32;
+//  bool tests_included = 33;
+
+  repeated File changed_files = 50;
+  uint32 changed_files_count = 51;
+
+  repeated Commit commits = 60;
+  uint32 commits_count = 61;
+
+//  string id = 63;
+//  uint32 number = 64;
+
+  repeated TaskData task_data = 70;
+}
+
+message Changes {
+  repeated Change changes = 1;
+}
+
+message ChangeEvent {
+  string id = 1;
+  string type = 2;
+  string change_id = 3;
+
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp on_created_at = 6;
+
+  string author = 10;
+  string on_author = 11;
+
+  string branch = 20;
+}
+
+message ChangeAndEvents {
+  Change change = 1;
+  repeated ChangeEvent events = 2;
+}
+
+message ReviewCount {
+  uint32 authors_count = 1;
+  uint32 events_count = 2;
+}
+
+message Histo {
+  string date = 1;
+  uint32 count = 2;
+}
+
+message ReviewStats {
+  ReviewCount comment_count = 1;
+  ReviewCount review_count = 2;
+  uint32 comment_delay = 5;
+  uint32 review_delay = 6;
+  repeated Histo comment_histo = 10;
+  repeated Histo review_histo = 11;
+}
+
+message ActivityStats {
+  uint32 change_authors = 1;
+  uint32 comment_authors = 2;
+  uint32 review_authors = 3;
+  repeated Histo comments_histo = 10;
+  repeated Histo reviews_histo = 11;
+  repeated Histo changes_histo = 12;
+}
+
+message QueryResponse {
+  oneof result {
+    QueryError error = 1;
+    Changes changes = 2;
+    ReposSummary repos_summary = 3;
+    TermsCount top_authors = 4;
+    AuthorsPeers authors_peers = 5;
+    TermsCount new_authors = 6;
+    ReviewStats review_stats = 20;
+    LifecycleStats lifecycle_stats = 21;
+    ActivityStats activity_stats = 22;
+    ChangeAndEvents change_events = 30;
+    ChangesTops changes_tops = 31;
+  }
+}
+
+message LifecycleStats {
+  repeated Histo created_histo = 1;
+  repeated Histo updated_histo = 2;
+  repeated Histo merged_histo = 3;
+  repeated Histo abandoned_histo = 4;
+
+  ReviewCount created = 5;
+
+  uint32 abandoned = 11;
+  uint32 merged = 13;
+  uint32 self_merged = 15;
+  float self_merged_ratio = 16;
+
+  // Mean time to merge
+  float ttm_mean = 30;
+  // Median deviation of ttm
+  float ttm_variability = 31;
+
+  uint32 updates_of_changes = 32;
+
+  float changes_with_tests = 33;
+  float iterations_per_change = 34;
+  float commits_per_change = 35;
+}
+
+message RepoSummary {
+  string fullname = 1;
+  uint32 created_changes = 2;
+  uint32 abandoned_changes = 3;
+  uint32 merged_changes = 4;
+  uint32 updated_changes = 5;
+  uint32 open_changes = 6;
+}
+
+message ReposSummary {
+  repeated RepoSummary reposum = 1;
+}
+
+message TermCount {
+  string term = 1;
+  uint32 count = 2;
+}
+
+message TermsCount {
+  repeated TermCount termcount = 1;
+  uint32 total_hits = 2;
+}
+
+message AuthorPeer {
+  string author = 1;
+  string peer = 2;
+  uint32 strength = 3;
+}
+
+message AuthorsPeers {
+  repeated AuthorPeer author_peer = 1;
+}
+
+message ChangesTops {
+  TermsCount authors = 1;
+  TermsCount repos = 2;
+  TermsCount approvals = 3;
+}

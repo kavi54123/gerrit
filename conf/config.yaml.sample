@@ -1,0 +1,9 @@
+workspaces:
+  - name: demo
+    crawlers:
+      - name: zuul-opendev
+        provider:
+          gerrit_url: https://review.opendev.org
+          gerrit_repositories:
+            - ^zuul/.*
+        update_since: '2021-10-01'

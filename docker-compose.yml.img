@@ -1,0 +1,75 @@
+services:
+  api:
+    command: monocle-api --port 9898
+    depends_on:
+      - elastic
+    env_file: ".secrets"
+    environment:
+      CONFIG: /etc/monocle/config.yaml
+      ELASTIC_CONN: elastic:9200
+    expose:
+      - 9898
+    healthcheck:
+      retries: 6
+      test: "python -c \"import requests,sys; r=requests.post('http://localhost:9898/api/2/health', json={}); print(r.text); sys.exit(1) if r.status_code!=200 else sys.exit(0)\""
+      timeout: "60s"
+    image: "quay.io/change-metrics/monocle_api:${MONOCLE_VERSION:-latest}"
+    restart: unless-stopped
+    volumes:
+      - "./etc:/etc/monocle:z"
+  crawler:
+    command: macroscope
+    depends_on:
+      - api
+    env_file: ".secrets"
+    environment:
+      CONFIG: /etc/monocle/config.yaml
+    healthcheck:
+      retries: 6
+      test: "curl --silent --fail localhost:9001/health || exit 1"
+      timeout: "60s"
+    image: "quay.io/change-metrics/monocle_api:${MONOCLE_VERSION:-latest}"
+    restart: unless-stopped
+    volumes:
+      - "./etc:/etc/monocle:z"
+  crawler-legacy:
+    command: monocle --elastic-conn elastic:9200 crawler --config /etc/monocle/config.yaml
+    depends_on:
+      - elastic
+    env_file: ".secrets"
+    image: "quay.io/change-metrics/monocle_backend:${MONOCLE_VERSION:-latest}"
+    restart: unless-stopped
+    volumes:
+      - "./etc:/etc/monocle:z"
+      - "./dump:/var/lib/crawler:Z"
+  elastic:
+    environment:
+      ES_JAVA_OPTS: "-Xms${ES_XMS:-512m} -Xmx${ES_XMX:-512m}"
+      discovery.type: single-node
+    expose:
+      - 9200
+    healthcheck:
+      retries: 6
+      test: "curl --silent --fail localhost:9200/_cluster/health || exit 1"
+      timeout: "60s"
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        hard: 65535
+        soft: 65535
+    volumes:
+      - "./data:/usr/share/elasticsearch/data:Z"
+  web:
+    depends_on:
+      - api
+    environment:
+      REACT_APP_API_URL: "${MONOCLE_PUBLIC_URL:-http://localhost:8080}"
+      REACT_APP_TITLE: "${MONOCLE_TITLE}"
+    image: "quay.io/change-metrics/monocle_web:${MONOCLE_VERSION:-latest}"
+    ports:
+      - "${MONOCLE_WEB_ADDR:-0.0.0.0}:${MONOCLE_WEB_PORT:-8080}:8080"
+    restart: unless-stopped
+    volumes:
+      - "./web/conf:/etc/nginx/conf.d:z"
+version: '3'

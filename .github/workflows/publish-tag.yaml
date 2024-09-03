@@ -1,0 +1,100 @@
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish-tag:
+    if: github.repository_owner == 'change-metrics'
+    runs-on: ubuntu-latest
+    steps:
+      # See https://github.com/actions/virtual-environments/issues/3812 for more information
+      - name: Download Docker with patched seccomp
+        run: |
+          sudo systemctl stop docker containerd
+          sudo apt-get remove --autoremove -y moby-engine moby-cli moby-buildx moby-containerd moby-runc
+          sudo add-apt-repository -y ppa:pascallj/docker.io-clone3
+          sudo apt-get install -y docker.io
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - uses: olegtarasov/get-tag@v2.1
+        id: tagName
+
+      - name: Display tag name
+        env:
+          TAG_NAME: ${{ steps.tagName.outputs.tag }}
+        run: |
+          echo "tag_name: $TAG_NAME"
+
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Build docker images
+        run: |
+          ln -s docker-compose.yml.dev docker-compose.yml
+          cat > .secrets << EOF
+          CRAWLERS_API_KEY=secret
+          GITHUB_TOKEN=123
+          EOF
+          docker-compose build
+
+      - name: Set write permission for others for data directory
+        run: |
+          chmod o+w data
+
+      - name: Create a config.yaml file
+        run: |
+          cat > etc/config.yaml << EOL
+          ---
+          workspaces:
+            - name: monocle
+              crawlers:
+                - name: github-tekton
+                  update_since: "2020-01-01"
+                  provider:
+                    github_organization: tekton
+          EOL
+
+      - name: Start containers
+        run: docker-compose up -d
+
+      - name: Wait for services to start
+        run: sleep 45
+
+      - name: Display docker-compose information
+        run: |
+          docker-compose ps
+          docker-compose logs
+
+      - name: Check services are running
+        run: test -z "$(sudo docker-compose ps -a | grep Exit)"
+
+      - name: Check api service through nginx
+        run: "curl -s --fail -H 'Content-type: application/json' http://localhost:8080/api/2/get_workspaces -d '{}' | grep 'workspaces'"
+
+      - name: Check web service to fetch web app
+        run: "curl -s http://localhost:8080/index.html | grep 'window.TITLE'"
+
+      - name: Publish images to docker-hub
+        env:
+          TAG_NAME: ${{ steps.tagName.outputs.tag }}
+        run: |
+          docker login -u "${{ secrets.QUAYIO_USERNAME }}" -p "${{ secrets.QUAYIO_PASSWORD }}" quay.io
+          set -x
+
+          docker tag monocle_web:latest quay.io/change-metrics/monocle_web:$TAG_NAME
+          docker push quay.io/change-metrics/monocle_web:$TAG_NAME
+
+          docker tag monocle_crawler-legacy:latest quay.io/change-metrics/monocle_backend:$TAG_NAME
+          docker push quay.io/change-metrics/monocle_backend:$TAG_NAME
+
+          docker tag monocle_api:latest quay.io/change-metrics/monocle_api:$TAG_NAME
+          docker push quay.io/change-metrics/monocle_api:$TAG_NAME

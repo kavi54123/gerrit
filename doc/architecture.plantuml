@@ -1,0 +1,21 @@
+@startuml
+title Monocle architecture
+
+package "backend" {
+  database "elastic" as Datastore
+  collections "api" as Api
+  agent "crawler" as Worker
+  cloud "web" as Proxy
+
+  package "legacy" {
+    agent "crawler" as LegacyWorker
+  }
+}
+actor user as User
+
+Api --> Datastore
+Api <--> Worker
+Proxy -> Api
+User --> Proxy
+LegacyWorker --> Datastore
+@enduml

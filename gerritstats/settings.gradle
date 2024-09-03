@@ -1,3 +1,0 @@
-include ':GerritCommon'
-include ':GerritDownloader'
-include ':GerritStats'

@@ -1,0 +1,111 @@
+// Copyright: (c) 2021 Monocle authors
+// SPDX-License-Identifier: AGPL-3.0-only
+
+// This file define an empty service to force the openapi generator
+// to set the right title and description in the generate openapi.yaml file.
+
+syntax = "proto3";
+package monocle_web;
+option go_package = "monocle/http";
+
+import "google/api/annotations.proto";
+
+import "monocle/config.proto";
+import "monocle/search.proto";
+import "monocle/crawler.proto";
+import "monocle/user_group.proto";
+
+service Config {
+  // Return the list of workspaces
+  rpc GetWorkspaces(monocle_config.GetWorkspacesRequest) returns (monocle_config.GetWorkspacesResponse) {
+    option (google.api.http) = {
+      post: "/api/2/get_workspaces"
+      body: "*"
+    };
+  }
+
+  // Return the list of projects
+  rpc GetProjects(monocle_config.GetProjectsRequest) returns (monocle_config.GetProjectsResponse) {
+    option (google.api.http) = {
+      post: "/api/2/get_projects"
+      body: "*"
+    };
+  }
+}
+
+service Search {
+  rpc Suggestions(monocle_search.SuggestionsRequest)
+      returns (monocle_search.SuggestionsResponse) {
+    option (google.api.http) = {
+      post: "/api/2/suggestions"
+      body: "*"
+    };
+  }
+  rpc Fields(monocle_search.FieldsRequest)
+      returns (monocle_search.FieldsResponse) {
+    option (google.api.http) = {
+      post: "/api/2/search/fields"
+      body: "*"
+    };
+  }
+  rpc Check(monocle_search.CheckRequest)
+      returns (monocle_search.CheckResponse) {
+    option (google.api.http) = {
+      post: "/api/2/search/check"
+      body: "*"
+    };
+  }
+  rpc Query(monocle_search.QueryRequest)
+      returns (monocle_search.QueryResponse) {
+    option (google.api.http) = {
+      post: "/api/2/search/query"
+      body: "*"
+    };
+  }
+}
+
+service UserGroup {
+  rpc List(monocle_user_group.ListRequest)
+      returns (monocle_user_group.ListResponse) {
+    option (google.api.http) = {
+      post: "/api/2/user_group/list"
+      body: "*"
+    };
+  }
+  rpc Get(monocle_user_group.GetRequest)
+      returns (monocle_user_group.GetResponse) {
+    option (google.api.http) = {
+      post: "/api/2/user_group/get"
+      body: "*"
+    };
+  }
+}
+
+service Crawler {
+  // Push crawler data
+  rpc AddDoc(monocle_crawler.AddDocRequest) returns (monocle_crawler.AddDocResponse) {
+    option (google.api.http) = {
+      post: "/api/2/crawler/add"
+      body: "*"
+    };
+  }
+  // Add commit message
+  rpc Commit(monocle_crawler.CommitRequest) returns (monocle_crawler.CommitResponse) {
+    option (google.api.http) = {
+      post: "/api/2/crawler/commit"
+      body: "*"
+    };
+  }
+  // Get commit message
+  rpc CommitInfo(monocle_crawler.CommitInfoRequest)
+      returns (monocle_crawler.CommitInfoResponse) {
+    option (google.api.http) = {
+      post: "/api/2/crawler/get_commit_info"
+      body: "*"
+    };
+  }
+}
+
+// The monocle HTTP API
+service Monocle {
+}

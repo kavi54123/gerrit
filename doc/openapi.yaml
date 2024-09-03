@@ -1,0 +1,1039 @@
+# Generated with protoc-gen-openapi
+# https://github.com/googleapis/gnostic/tree/master/apps/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: Monocle
+    description: The monocle HTTP API
+    version: 0.0.1
+paths:
+    /api/2/crawler/add:
+        post:
+            summary: Push crawler data
+            operationId: Crawler_AddDoc
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_crawler_AddDocRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_crawler_AddDocResponse'
+    /api/2/crawler/commit:
+        post:
+            summary: Add commit message
+            operationId: Crawler_Commit
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_crawler_CommitRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_crawler_CommitResponse'
+    /api/2/crawler/get_commit_info:
+        post:
+            summary: Get commit message
+            operationId: Crawler_CommitInfo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_crawler_CommitInfoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_crawler_CommitInfoResponse'
+    /api/2/get_projects:
+        post:
+            summary: Return the list of projects
+            operationId: Config_GetProjects
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_config_GetProjectsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_config_GetProjectsResponse'
+    /api/2/get_workspaces:
+        post:
+            summary: Return the list of workspaces
+            operationId: Config_GetWorkspaces
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_config_GetWorkspacesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_config_GetWorkspacesResponse'
+    /api/2/search/check:
+        post:
+            operationId: Search_Check
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_search_CheckRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_search_CheckResponse'
+    /api/2/search/fields:
+        post:
+            operationId: Search_Fields
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_search_FieldsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_search_FieldsResponse'
+    /api/2/search/query:
+        post:
+            operationId: Search_Query
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_search_QueryRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_search_QueryResponse'
+    /api/2/suggestions:
+        post:
+            operationId: Search_Suggestions
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_search_SuggestionsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_search_SuggestionsResponse'
+    /api/2/user_group/get:
+        post:
+            operationId: UserGroup_Get
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_user_group_GetRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_user_group_GetResponse'
+    /api/2/user_group/list:
+        post:
+            operationId: UserGroup_List
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monocle_user_group_ListRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monocle_user_group_ListResponse'
+components:
+    schemas:
+        monocle_change_Change:
+            properties:
+                id:
+                    type: string
+                number:
+                    type: integer
+                    format: int32
+                change_id:
+                    type: string
+                title:
+                    type: string
+                text:
+                    type: string
+                url:
+                    type: string
+                commit_count:
+                    type: integer
+                    format: int32
+                additions:
+                    type: integer
+                    format: int32
+                deletions:
+                    type: integer
+                    format: int32
+                changed_files_count:
+                    type: integer
+                    format: int32
+                changed_files:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_change_ChangedFile'
+                commits:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_change_Commit'
+                repository_prefix:
+                    type: string
+                repository_fullname:
+                    type: string
+                repository_shortname:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/monocle_change_Ident'
+                merged_by:
+                    $ref: '#/components/schemas/monocle_change_Ident'
+                branch:
+                    type: string
+                target_branch:
+                    type: string
+                created_at:
+                    type: string
+                    format: RFC3339
+                merged_at:
+                    type: string
+                    format: RFC3339
+                updated_at:
+                    type: string
+                    format: RFC3339
+                closed_at:
+                    type: string
+                    format: RFC3339
+                state:
+                    type: integer
+                    format: enum
+                duration:
+                    type: integer
+                    format: int32
+                mergeable:
+                    type: string
+                labels:
+                    type: array
+                    items:
+                        type: string
+                assignees:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_change_Ident'
+                approvals:
+                    type: array
+                    items:
+                        type: string
+                draft:
+                    type: boolean
+                self_merged:
+                    type: boolean
+        monocle_change_ChangeAbandonedEvent:
+            properties: {}
+        monocle_change_ChangeCommentedEvent:
+            properties: {}
+        monocle_change_ChangeCommitForcePushedEvent:
+            properties: {}
+        monocle_change_ChangeCommitPushedEvent:
+            properties: {}
+        monocle_change_ChangeCreatedEvent:
+            properties: {}
+        monocle_change_ChangeEvent:
+            properties:
+                id:
+                    type: string
+                created_at:
+                    type: string
+                    format: RFC3339
+                author:
+                    $ref: '#/components/schemas/monocle_change_Ident'
+                repository_prefix:
+                    type: string
+                repository_fullname:
+                    type: string
+                repository_shortname:
+                    type: string
+                branch:
+                    type: string
+                target_branch:
+                    type: string
+                number:
+                    type: integer
+                    format: int32
+                change_id:
+                    type: string
+                url:
+                    type: string
+                on_author:
+                    $ref: '#/components/schemas/monocle_change_Ident'
+                on_created_at:
+                    type: string
+                    format: RFC3339
+                changed_files:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_change_ChangedFilePath'
+                ChangeCreated:
+                    $ref: '#/components/schemas/monocle_change_ChangeCreatedEvent'
+                ChangeCommented:
+                    $ref: '#/components/schemas/monocle_change_ChangeCommentedEvent'
+                ChangeAbandoned:
+                    $ref: '#/components/schemas/monocle_change_ChangeAbandonedEvent'
+                ChangeReviewed:
+                    $ref: '#/components/schemas/monocle_change_ChangeReviewedEvent'
+                ChangeCommitForcePushed:
+                    $ref: '#/components/schemas/monocle_change_ChangeCommitForcePushedEvent'
+                ChangeCommitPushed:
+                    $ref: '#/components/schemas/monocle_change_ChangeCommitPushedEvent'
+                ChangeMerged:
+                    $ref: '#/components/schemas/monocle_change_ChangeMergedEvent'
+                labels:
+                    type: array
+                    items:
+                        type: string
+        monocle_change_ChangeMergedEvent:
+            properties: {}
+        monocle_change_ChangeReviewedEvent:
+            properties:
+                approvals:
+                    type: array
+                    items:
+                        type: string
+        monocle_change_ChangedFile:
+            properties:
+                additions:
+                    type: integer
+                    format: int32
+                deletions:
+                    type: integer
+                    format: int32
+                path:
+                    type: string
+        monocle_change_ChangedFilePath:
+            properties:
+                path:
+                    type: string
+        monocle_change_Commit:
+            properties:
+                sha:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/monocle_change_Ident'
+                committer:
+                    $ref: '#/components/schemas/monocle_change_Ident'
+                authored_at:
+                    type: string
+                    format: RFC3339
+                committed_at:
+                    type: string
+                    format: RFC3339
+                additions:
+                    type: integer
+                    format: int32
+                deletions:
+                    type: integer
+                    format: int32
+                title:
+                    type: string
+        monocle_change_Ident:
+            properties:
+                uid:
+                    type: string
+                muid:
+                    type: string
+        monocle_config_GetProjectsRequest:
+            properties:
+                index:
+                    type: string
+        monocle_config_GetProjectsResponse:
+            properties:
+                projects:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_config_ProjectDefinition'
+        monocle_config_GetWorkspacesRequest:
+            properties:
+                void:
+                    type: string
+        monocle_config_GetWorkspacesResponse:
+            properties:
+                workspaces:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_config_Workspace'
+        monocle_config_ProjectDefinition:
+            properties:
+                name:
+                    type: string
+                repository_regex:
+                    type: string
+                branch_regex:
+                    type: string
+                file_regex:
+                    type: string
+        monocle_config_Workspace:
+            properties:
+                name:
+                    type: string
+        monocle_crawler_AddDocRequest:
+            properties:
+                index:
+                    type: string
+                crawler:
+                    type: string
+                apikey:
+                    type: string
+                entity:
+                    $ref: '#/components/schemas/monocle_crawler_Entity'
+                changes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_change_Change'
+                    description: changes are added when Entity is project_name
+                events:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_change_ChangeEvent'
+                    description: events are added when Entity is project_name
+                projects:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_project_Project'
+                    description: projects are added when Entity is organization_name
+                task_datas:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_TaskData'
+                    description: task_datas are added when Entity is td_name
+        monocle_crawler_AddDocResponse:
+            properties:
+                error:
+                    type: integer
+                    format: enum
+        monocle_crawler_CommitInfoRequest:
+            properties:
+                index:
+                    type: string
+                crawler:
+                    type: string
+                entity:
+                    $ref: '#/components/schemas/monocle_crawler_Entity'
+                offset:
+                    type: integer
+                    format: uint32
+        monocle_crawler_CommitInfoResponse:
+            properties:
+                error:
+                    type: integer
+                    format: enum
+                entity:
+                    $ref: '#/components/schemas/monocle_crawler_OldestEntity'
+        monocle_crawler_CommitRequest:
+            properties:
+                index:
+                    type: string
+                crawler:
+                    type: string
+                apikey:
+                    type: string
+                entity:
+                    $ref: '#/components/schemas/monocle_crawler_Entity'
+                timestamp:
+                    type: string
+                    format: RFC3339
+        monocle_crawler_CommitResponse:
+            properties:
+                error:
+                    type: integer
+                    format: enum
+                timestamp:
+                    type: string
+                    format: RFC3339
+        monocle_crawler_Entity:
+            properties:
+                organization_name:
+                    type: string
+                project_name:
+                    type: string
+                td_name:
+                    type: string
+            description: A descriptive name of the entities being added
+        monocle_project_Project:
+            properties:
+                full_path:
+                    type: string
+        monocle_search_ActivityStats:
+            properties:
+                change_authors:
+                    type: integer
+                    format: uint32
+                comment_authors:
+                    type: integer
+                    format: uint32
+                review_authors:
+                    type: integer
+                    format: uint32
+                comments_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+                reviews_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+                changes_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+        monocle_search_AuthorPeer:
+            properties:
+                author:
+                    type: string
+                peer:
+                    type: string
+                strength:
+                    type: integer
+                    format: uint32
+        monocle_search_AuthorsPeers:
+            properties:
+                author_peer:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_AuthorPeer'
+        monocle_search_Change:
+            properties:
+                change_id:
+                    type: string
+                author:
+                    type: string
+                title:
+                    type: string
+                url:
+                    type: string
+                repository_fullname:
+                    type: string
+                state:
+                    type: string
+                branch:
+                    type: string
+                target_branch:
+                    type: string
+                created_at:
+                    type: string
+                    format: RFC3339
+                updated_at:
+                    type: string
+                    format: RFC3339
+                merged_at:
+                    type: string
+                    format: RFC3339
+                merged_by:
+                    type: string
+                text:
+                    type: string
+                additions:
+                    type: integer
+                    format: uint32
+                deletions:
+                    type: integer
+                    format: uint32
+                approval:
+                    type: array
+                    items:
+                        type: string
+                assignees:
+                    type: array
+                    items:
+                        type: string
+                labels:
+                    type: array
+                    items:
+                        type: string
+                draft:
+                    type: boolean
+                mergeable:
+                    type: boolean
+                    description: bool has_issue_tracker_links = 31;
+                changed_files:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_File'
+                changed_files_count:
+                    type: integer
+                    format: uint32
+                commits:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Commit'
+                commits_count:
+                    type: integer
+                    format: uint32
+                task_data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_TaskData'
+        monocle_search_ChangeAndEvents:
+            properties:
+                change:
+                    $ref: '#/components/schemas/monocle_search_Change'
+                events:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_ChangeEvent'
+        monocle_search_ChangeEvent:
+            properties:
+                id:
+                    type: string
+                type:
+                    type: string
+                change_id:
+                    type: string
+                created_at:
+                    type: string
+                    format: RFC3339
+                on_created_at:
+                    type: string
+                    format: RFC3339
+                author:
+                    type: string
+                on_author:
+                    type: string
+                branch:
+                    type: string
+        monocle_search_Changes:
+            properties:
+                changes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Change'
+        monocle_search_ChangesTops:
+            properties:
+                authors:
+                    $ref: '#/components/schemas/monocle_search_TermsCount'
+                repos:
+                    $ref: '#/components/schemas/monocle_search_TermsCount'
+                approvals:
+                    $ref: '#/components/schemas/monocle_search_TermsCount'
+        monocle_search_CheckRequest:
+            properties:
+                index:
+                    type: string
+                username:
+                    type: string
+                query:
+                    type: string
+        monocle_search_CheckResponse:
+            properties:
+                success:
+                    type: string
+                error:
+                    $ref: '#/components/schemas/monocle_search_QueryError'
+        monocle_search_Commit:
+            properties:
+                sha:
+                    type: string
+                title:
+                    type: string
+                author:
+                    type: string
+                authored_at:
+                    type: string
+                    format: RFC3339
+                committer:
+                    type: string
+                committed_at:
+                    type: string
+                    format: RFC3339
+                additions:
+                    type: integer
+                    format: uint32
+                deletions:
+                    type: integer
+                    format: uint32
+        monocle_search_Field:
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                type:
+                    type: integer
+                    format: enum
+        monocle_search_FieldsRequest:
+            properties:
+                version:
+                    type: string
+        monocle_search_FieldsResponse:
+            properties:
+                fields:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Field'
+        monocle_search_File:
+            properties:
+                additions:
+                    type: integer
+                    format: uint32
+                deletions:
+                    type: integer
+                    format: uint32
+                path:
+                    type: string
+        monocle_search_Histo:
+            properties:
+                date:
+                    type: string
+                count:
+                    type: integer
+                    format: uint32
+        monocle_search_LifecycleStats:
+            properties:
+                created_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+                updated_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+                merged_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+                abandoned_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+                created:
+                    $ref: '#/components/schemas/monocle_search_ReviewCount'
+                abandoned:
+                    type: integer
+                    format: uint32
+                merged:
+                    type: integer
+                    format: uint32
+                self_merged:
+                    type: integer
+                    format: uint32
+                self_merged_ratio:
+                    type: number
+                    format: float
+                ttm_mean:
+                    type: number
+                    description: Mean time to merge
+                    format: float
+                ttm_variability:
+                    type: number
+                    description: Median deviation of ttm
+                    format: float
+                updates_of_changes:
+                    type: integer
+                    format: uint32
+                changes_with_tests:
+                    type: number
+                    format: float
+                iterations_per_change:
+                    type: number
+                    format: float
+                commits_per_change:
+                    type: number
+                    format: float
+        monocle_search_Order:
+            properties:
+                field:
+                    type: string
+                direction:
+                    type: integer
+                    format: enum
+        monocle_search_QueryError:
+            properties:
+                message:
+                    type: string
+                position:
+                    type: integer
+                    format: uint32
+        monocle_search_QueryRequest:
+            properties:
+                index:
+                    type: string
+                username:
+                    type: string
+                query:
+                    type: string
+                query_type:
+                    type: integer
+                    format: enum
+                order:
+                    $ref: '#/components/schemas/monocle_search_Order'
+                limit:
+                    type: integer
+                    format: uint32
+                change_id:
+                    type: string
+        monocle_search_QueryResponse:
+            properties:
+                error:
+                    $ref: '#/components/schemas/monocle_search_QueryError'
+                changes:
+                    $ref: '#/components/schemas/monocle_search_Changes'
+                repos_summary:
+                    $ref: '#/components/schemas/monocle_search_ReposSummary'
+                top_authors:
+                    $ref: '#/components/schemas/monocle_search_TermsCount'
+                authors_peers:
+                    $ref: '#/components/schemas/monocle_search_AuthorsPeers'
+                new_authors:
+                    $ref: '#/components/schemas/monocle_search_TermsCount'
+                review_stats:
+                    $ref: '#/components/schemas/monocle_search_ReviewStats'
+                lifecycle_stats:
+                    $ref: '#/components/schemas/monocle_search_LifecycleStats'
+                activity_stats:
+                    $ref: '#/components/schemas/monocle_search_ActivityStats'
+                change_events:
+                    $ref: '#/components/schemas/monocle_search_ChangeAndEvents'
+                changes_tops:
+                    $ref: '#/components/schemas/monocle_search_ChangesTops'
+        monocle_search_RepoSummary:
+            properties:
+                fullname:
+                    type: string
+                created_changes:
+                    type: integer
+                    format: uint32
+                abandoned_changes:
+                    type: integer
+                    format: uint32
+                merged_changes:
+                    type: integer
+                    format: uint32
+                updated_changes:
+                    type: integer
+                    format: uint32
+                open_changes:
+                    type: integer
+                    format: uint32
+        monocle_search_ReposSummary:
+            properties:
+                reposum:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_RepoSummary'
+        monocle_search_ReviewCount:
+            properties:
+                authors_count:
+                    type: integer
+                    format: uint32
+                events_count:
+                    type: integer
+                    format: uint32
+        monocle_search_ReviewStats:
+            properties:
+                comment_count:
+                    $ref: '#/components/schemas/monocle_search_ReviewCount'
+                review_count:
+                    $ref: '#/components/schemas/monocle_search_ReviewCount'
+                comment_delay:
+                    type: integer
+                    format: uint32
+                review_delay:
+                    type: integer
+                    format: uint32
+                comment_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+                review_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_Histo'
+        monocle_search_SuggestionsRequest:
+            properties:
+                index:
+                    type: string
+        monocle_search_SuggestionsResponse:
+            properties:
+                task_types:
+                    type: array
+                    items:
+                        type: string
+                authors:
+                    type: array
+                    items:
+                        type: string
+                approvals:
+                    type: array
+                    items:
+                        type: string
+                priorities:
+                    type: array
+                    items:
+                        type: string
+                severities:
+                    type: array
+                    items:
+                        type: string
+                projects:
+                    type: array
+                    items:
+                        type: string
+                groups:
+                    type: array
+                    items:
+                        type: string
+                labels:
+                    type: array
+                    items:
+                        type: string
+        monocle_search_TaskData:
+            properties:
+                updated_at:
+                    type: string
+                    format: RFC3339
+                change_url:
+                    type: string
+                ttype:
+                    type: array
+                    items:
+                        type: string
+                tid:
+                    type: string
+                url:
+                    type: string
+                title:
+                    type: string
+                severity:
+                    type: string
+                priority:
+                    type: string
+                score:
+                    type: integer
+                    format: int32
+                prefix:
+                    type: string
+        monocle_search_TermCount:
+            properties:
+                term:
+                    type: string
+                count:
+                    type: integer
+                    format: uint32
+        monocle_search_TermsCount:
+            properties:
+                termcount:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_search_TermCount'
+                total_hits:
+                    type: integer
+                    format: uint32
+        monocle_user_group_GetRequest:
+            properties:
+                index:
+                    type: string
+                name:
+                    type: string
+                query:
+                    type: string
+        monocle_user_group_GetResponse:
+            properties:
+                all:
+                    $ref: '#/components/schemas/monocle_user_group_GroupStat'
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_user_group_UserStat'
+        monocle_user_group_GroupDefinition:
+            properties:
+                name:
+                    type: string
+                members:
+                    type: integer
+                    format: uint32
+        monocle_user_group_GroupStat:
+            properties:
+                change_review_ratio:
+                    type: number
+                    format: float
+                author_review_ratio:
+                    type: number
+                    format: float
+                commit_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_user_group_ReviewHisto'
+                review_histo:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_user_group_ReviewHisto'
+        monocle_user_group_ListRequest:
+            properties:
+                index:
+                    type: string
+        monocle_user_group_ListResponse:
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monocle_user_group_GroupDefinition'
+        monocle_user_group_ReviewHisto:
+            properties:
+                date:
+                    type: integer
+                    format: uint64
+                count:
+                    type: integer
+                    format: uint32
+        monocle_user_group_UserStat:
+            properties:
+                name:
+                    type: string
+                stat:
+                    $ref: '#/components/schemas/monocle_user_group_GroupStat'

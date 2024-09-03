@@ -1,0 +1,15 @@
+build
+dist
+*.py[oc]
+monocle.egg-info
+/data
+etc
+.venv
+.tox
+.mypy_cache
+.env
+.secrets
+docker-compose.yml
+dump
+.vscode
+.hie
